@@ -1,0 +1,38 @@
+nav {
+    background-color: rgb(79, 35, 135)  !important;
+}
+
+.brand-logo img {
+    height: 64px;
+}
+
+.title{
+    font-size: 2rem !important;
+    font-weight: 600;
+}
+
+.col{
+    margin-bottom: 0px !important;
+}
+
+
+.description{
+    margin-bottom: 50px;
+}
+
+#map {
+    height: 400px;
+}
+
+main{
+    min-height: 100vh !important;
+}
+
+footer{
+    padding-top: 0px !important;
+    background-color: rgb(31, 31, 31)  !important;
+}
+
+thead{
+    font-weight:600 !important;
+}

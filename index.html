@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Fertility App</title>
+
+     <!-- Materialize -->
+     <link rel="stylesheet" href="libs/materializecss.min.css">
+     <script src="libs/materialize.min.js"></script>
+
+     <!-- Sliders library -->
+     <link rel="stylesheet" href="libs/nouislider.min.css">
+     <script src="libs/nouislider.min.js"></script>
+     <script src="libs/wNumb.min.js"></script>
+
+     <!-- Plotly library -->
+     <script src="libs/plotly_cartesian.min.js"></script>
+
+     <!-- Leaflet library JS 
+     <link rel="stylesheet" href="libs/leaflet.css">
+     <script src="libs/leaflet.js"></script>
+     -->
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+     crossorigin=""/>
+     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+     crossorigin=""></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper container">
+                <a href="#" class="brand-logo"> <img src="images/kstate.png"></a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a class="modal-trigger" href="#modalhelp">Help</a></li>  
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+
+    <main class="container">
+        <div>
+            <h3 class="title">Nitrogen Recommendation Tool</h3>
+            <p class="description">This tool is aimed at providing an approximate nitrogen recommendation based on yield goal, the availability 
+                of nitrogen in the soil profile, and an expected mineralization of organic matter.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s5 m3">
+                <input value="" id="fieldNameInput" type="text" class="validate">
+                <label for="fieldNameInput">Field name</label>
+            </div>
+            <div class="input-field col s7 m9">
+                <input value="" id="fieldDescriptionInput" type="text" maxlength="75" class="validate">
+                <label for="fieldDescriptionInput">Brief field description</label>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col s12 m6" style="padding: 0%;">
+                <p style="margin-top: 0px;">Mark field location</p>
+                <div id="map"></div>
+            </div>
+
+
+            <div class="col s12 m6">
+                <p style="margin-top: 0px;">Management inputs</p>
+                <div class="row">
+                    <!-- Crop menu -->
+                    <div class="input-field col s4">
+                        <select id="cropInput">
+                            <option value="wheat">Wheat</option>
+                            <option value="corn">Corn</option>
+                        </select>
+                        <label>Select crop</label>
+                    </div>
+
+                    <div class="input-field col s4">
+                        <input value="40" id="yieldGoalInput" type="number" class="validate">
+                        <label for="yieldGoalInput">Yield Goal (bu/ac)</label>
+                    </div>
+
+                    <div class="input-field col s4">
+                        <input value="4" id="grainPriceInput" type="number" class="validate">
+                        <label for="grainPriceInput">Grain price ($/bu)</label>
+                    </div>
+
+                </div>
+
+
+                <!-- Yield  inputs -->
+                <div class="row">
+                    <!-- Previous crop menu -->
+                    <div class="input-field col s4">
+                        <select id="previousCropInput">
+                            <option value="alfalfa">Alfalfa</option>
+                            <option value="corn">Corn</option>
+                            <option value="fallow">Fallow</option>
+                            <option value="soybeans">Soybeans</option>
+                            <option value="wheat">Wheat</option>
+
+                        </select>
+                        <label>Previous crop</label>
+                    </div>
+
+                    <!-- Tillage menu -->
+                    <div class="input-field col s4">
+                        <select id="tillageInput">
+                            <option value="conventionalTillage">Conventional</option>
+                            <option value="noTillage">No-Till</option>
+                        </select>
+                        <label>Tillage</label>
+                    </div>
+
+                    <!-- Water inputs menu -->
+                    <div class="input-field col s4">
+                        <select id="waterInput">
+                            <option value="rainfed">Rainfed</option>
+                            <option value="irrigated">Irrigated</option>
+                        </select>
+                        <label>Water input</label>
+                    </div>
+
+                </div>
+
+                <!-- Soil test inputs -->
+                <p>Soil fertility analysis</p>
+                <div class="row">
+                    <div class="input-field col s4">
+                        <input value="6" id="sampleDepthInput" type="number" class="validate">
+                        <label for="sampleDepthInput">Sample depth (in)</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input value="30" id="nitrateInput" type="number" class="validate">
+                        <label for="nitrateInput">N-NO<sub>3</sub> (ppm)</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input value="3" id="organicMatterInput" type="number" class="validate">
+                        <label for="organicMatterInput">OM (%)</label>
+                    </div>
+                </div>
+
+                <p>Fertilizer</p>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <select id="fertilizerSourceInput">
+                            <option value="Anhydrous Ammonia_82">Anhyd. Ammonia (82%)</option>
+                            <option value="UAN_32">UAN (32%)</option>
+                            <option value="Urea_46">Urea (46%)</option>
+                        </select>
+                        <label>Select nitrogen source</label>
+                    </div>
+                    <div class="input-field col s3">
+                        <input value="350" id="fertilizerPriceInput" type="number" class="validate">
+                        <label for="fertilizerPriceInput">($/Ton)</label>
+                    </div>
+                    <div class="input-field col s3">
+                        <a class="waves-effect waves-light btn purple darken-1" id="calculateBtn">Calculate</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="panelResults" class="col s12 m12" style="display:none">
+                <p >Results</p>
+                <table class="responsive-table highlight">
+                    <thead>
+                        <tr>
+                            <td>Field</td>
+                            <td>Yield Goal (bu/ac)</td>
+                            <td>N recommendation (lbs/ac)</td>
+                            <td>Total fertilizer (lbs/ac)</td>
+                            <td>Fertilizer cost ($/ac)</td>
+                            <td>Fertilizer source</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="tableResults">
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="page-footer">
+        <div class="footer-copyright">
+          <div class="container">
+            © 2021 Copyright Kansas State University
+          <a class="grey-text text-lighten-4 right" href="https://www.agronomy.k-state.edu/services/soiltesting/">Visit the Soil Testing Lab</a>
+          </div>
+        </div>
+    </footer>
+
+    <!-- Modal Structure -->
+    <div id="modalhelp" class="modal model-close">
+        <div class="modal-content">
+            <h4>Help</h4>
+            <p>A simple Nitrogen recommendation tool for wheat and corn in Kansas.</p>
+        </div>
+    </div>
+
+    <script>
+          document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('select');
+                var instances = M.FormSelect.init(elems);
+            });
+            document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('.modal');
+                var instances = M.Modal.init(elems);
+            });
+
+    </script>
+    <script src="js/ks_agroregions.js"></script>
+    <script src="js/index.js"></script>
+
+    
+</body>
+</html>
